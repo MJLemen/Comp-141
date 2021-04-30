@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# A script ot prebuild a java class file
+#
+# Assume that his script accepts an argument, e.g.
+#       new_class ClassName
+# and this argument becomes the name of the class
+
+# First, let's make sure that the file name is not empty, If it is,
+# display a diagnostic message and end the script
+if [ -z "$1" ]; then
+  echo "File name is empty!"
+  exit 1
+fi
+
+# Conditons to validate the file name as a proper Java class name
+# ( Basically, make sure its firswt character is an upper case letter.)
+if [[ ! $1 =~ ^[A-Z] ]]; then
+  echo "$1 is not a valid Java class name"
+  exit 2
+fi
+# Condition to validate name and make sure no "@" symobl is in name
+if [[ $1 =~ @+ ]]; then
+echo "$1 is not a valid Java class name"
+  exit 3
+fi
+
+# Now that wee know the file name is not empty, assign to variable
+filename="$1.java" # The destination fo the script's output
+
+# Check if the file already exists
+if [ -f "$filename" ]; then
+  echo "File $filename already exists. Overwrite it? (y/n)"
+  read answer
+  if [ $answer == "n" ]; then
+    echo "Ok, I will not overwrite the file."
+    exit 4
+  fi
+fi
+# Create a variable for the class name. This is the same as $1, so it is not
+# really necessary, but it makes the code more readable
+cat << _EOF_ > $filename
+/**
+ * Class $classname
+ */
+public class $classname {
+  public static void main{String[] args) { #main method header
+  } // method main
+}
+_EOF_
+echo "File $filename successfully created."
